@@ -1,24 +1,54 @@
 version: '3.8'
 
 services:
+
+  postgres:
+    image: postgres:16
+    container_name: postgrestasks
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: deadlinetracker
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - app-network
+
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
-      - "${PORT:-3001}:${PORT:-3001}"
+      - "${PORTBACKEND}:${PORTBACKEND}"
     env_file:
       - ./backend/.env
+    container_name: backendtasks
     volumes:
-      # Menyimpan sesi login WhatsApp agar tidak perlu scan QR tiap kali container direstart
       - whatsapp_session:/app/.wwebjs_auth
     restart: unless-stopped
+    networks:
+      - app-network
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
-      - "5173:80" # Map port 5173 (di komputer Anda) ke port 80 (Nginx di dalam container)
+      - "${PORTFRONTEND}:${PORTFRONTEND}"
+    env_file:
+      - ./frontend/.env
+    container_name: frontendtasks
     depends_on:
       - backend
     restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   whatsapp_session:
+  postgres_data:

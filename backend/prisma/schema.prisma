@@ -1,0 +1,19 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Task {
+  id            Int       @id @default(autoincrement())
+  title         String
+  description   String?
+  deadline      DateTime
+  phone         String
+  status        String    @default("pending")
+  last_reminded DateTime?
+
+  @@map("tasks")
+}
