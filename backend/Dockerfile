@@ -1,24 +1,16 @@
-FROM node:20-alpine
+FROM node:20-slim
 
-# Install dependencies yang dibutuhkan oleh Puppeteer & Chromium di Alpine
-RUN apk add --no-cache \
+# Menggunakan Debian (slim) lebih stabil untuk Puppeteer dibanding Alpine
+# Install Chromium dan fonts yang dibutuhkan
+RUN apt-get update && apt-get install -y \
     chromium \
-    nss \
-    freetype \
-    harfbuzz \
-    ca-certificates \
-    ttf-freefont \
-    font-noto-cjk \
-    font-noto-cjk-fallback \
-    font-noto-cjk-sc \
-    font-noto-cjk-tc \
-    font-noto-cjk-jp \
-    font-noto-cjk-ko \
-    font-noto-emoji
+    fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
+    --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
 
-# Beri tahu Puppeteer untuk menggunakan Chromium bawaan sistem, bukan men-download sendiri
+# Beri tahu Puppeteer untuk menggunakan Chromium bawaan sistem
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 WORKDIR /app
 

@@ -2,15 +2,17 @@ version: '3.8'
 
 services:
 
-  postgres:
+  postgres-deadlinetracker:
     image: postgres:16
-    container_name: postgrestasks
+    container_name: postgres-deadlinetracker
+    ports:
+      - "${PORTDB1}:${PORTDB2}"
     environment:
-      POSTGRES_USER: postgres
+      POSTGRES_USER: postgres-deadlinetracker
       POSTGRES_PASSWORD: ${DB_PASS}
       POSTGRES_DB: deadlinetracker
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_deadlinetracker_data:/var/lib/postgresql/data
     restart: unless-stopped
     networks:
       - app-network
@@ -19,6 +21,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      network: host
     ports:
       - "${PORTBACKEND}:${PORTBACKEND}"
     env_file:
@@ -34,8 +37,9 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      network: host
     ports:
-      - "${PORTFRONTEND}:${PORTFRONTEND}"
+      - "${PORTFRONTEND}:80"
     env_file:
       - ./frontend/.env
     container_name: frontendtasks
@@ -51,4 +55,4 @@ networks:
 
 volumes:
   whatsapp_session:
-  postgres_data:
+  postgres_deadlinetracker_data:

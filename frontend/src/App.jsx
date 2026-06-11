@@ -4,7 +4,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { Trash2, CheckCircle, Clock, Calendar, Smartphone, Plus } from 'lucide-react';
 import './index.css';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const API_URL = import.meta.env.VITE_API_URL;
 
 function App() {
   const [waStatus, setWaStatus] = useState({ ready: false, qr: null });
